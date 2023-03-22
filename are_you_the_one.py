@@ -137,6 +137,8 @@ class Simulation:
                 break
                 
             round += 1
+        #for data analyzing - return amount of rounds
+        return round
 if __name__ == '__main__':
     #Simulated Game
     s1 = Simulation()
