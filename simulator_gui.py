@@ -56,7 +56,7 @@ contestant_frame = tk.Frame(master_frame)
 contestant_frame.grid(row=1,column=1)
 for i in range(4):
     for j in range(4):
-        contestant = tk.Label(contestant_frame,text=s1.meet_contestants()[count],width=10,fg='white',bg='blue',relief=tk.RIDGE)
+        contestant = tk.Label(contestant_frame,text=s1.meet_contestants()[count],width=10,fg='purple',bg='white',relief=tk.RIDGE)
         #contestant.grid(row=j+2,column=i)
         contestant.pack()
         count += 1
