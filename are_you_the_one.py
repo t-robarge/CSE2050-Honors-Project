@@ -1,7 +1,6 @@
 import random
 import name_list as ns
 
-
 class Contestant:
     def __init__(self):
         self.name = random.choice(ns.nameset)
@@ -23,11 +22,9 @@ class Simulation:
         self.contestants = []
         for i in range(self.num_of_contestants):
             self.contestants.append(Contestant())
-        #Randomly select perfect matches from contestant list
-
+        #Randomly select perfect matches from contestant lis
         self.perfect_matches = self.get_perfect_matches()
         
-   
     def get_perfect_matches(self):
         perfect_match_list = []
         contestants_copied = self.contestants[:]
@@ -49,9 +46,7 @@ class Simulation:
         for cont in self.contestants:
             meet_contestants.append(cont.__repr__())
         return meet_contestants
-
-
-
+    
     def truth_booth(self, matchup):
         if matchup in self.perfect_matches: return True
         return False
@@ -68,10 +63,51 @@ class Simulation:
                     continue
                 elif first == second:
                     continue
+                elif (second, first) in possible_couples:
+                    continue
                 else:
                     possible_couples.append(match_set)
         return possible_couples
+    def track_match_probability(self, guess, perfect_matches):
+        #make func that takes the guess and returns the list of non-perfect 
+        #match guesses, as well as the probability of one being correct
+        #represented as amt_correct_at_round / amt of non perfect matches
+        #store the variable and when the prob is good draw (amt_correct_at_round)
+        #matches at random from the list, this should optimize the function
+        new_guess = []
+        amt_correct = 0
+        probability = 0
+        for match in guess:
+            if match not in perfect_matches:
+                new_guess.append(match)
+                if self.truth_booth(match) is True: amt_correct += 1
+        if len(new_guess) > 0:
+            probability = amt_correct / len(new_guess)
+        return new_guess, probability
+    def random_algorithm(self, matches_remaining):
+        'randomly selects couples from match possibilities'
+        guess = []
         
+        #Truth Booth
+        truth_booth_choice = random.choice(matches_remaining)
+        result = self.truth_booth(truth_booth_choice)
+        if result is True:
+            guess.append(truth_booth_choice)
+        else:
+            matches_remaining.remove(truth_booth_choice)
+        #random guesses
+        while len(guess) < 8:
+            match = random.choice(matches_remaining)
+            if match not in guess:
+                guess.append(match)
+        
+        #determine amt correct
+        amount_correct = 0
+        for couple in guess:
+            if self.truth_booth(couple) is True: amount_correct += 1
+        return amount_correct, matches_remaining
+
+
     def algorithm_1(self, perfect_matches, matches_remaining, truth_booth_couples):
         #Send couple to truth booth
         if len(truth_booth_couples) > 0:
@@ -117,19 +153,85 @@ class Simulation:
                 assert(couple in self.perfect_matches)
 
         return amount_correct, perfect_matches, matches_remaining, truth_booth_couples
-    def play_game(self):
+    def optimized_algorithm(self,perfect_matches,matches_remaining, score_data):
+        #Send couple to truth booth
+        if score_data[1] >= .1:
+            selected_couple = random.choice(score_data[0])
+            if selected_couple in matches_remaining:
+                matches_remaining.remove(selected_couple)
+        else:
+            selected_couple = random.choice(matches_remaining)
+            matches_remaining.remove(selected_couple)
+        #Determine if they are a perfect match
+        result = self.truth_booth(selected_couple)
+        #add to perfect_match list if true
+        #remove possible couples with both individuals in them
+        if result is True:
+            for contestant in selected_couple:
+                for other in matches_remaining:
+                    if contestant in other:
+                        matches_remaining.remove(other)
+            perfect_matches.append(selected_couple)
+        
+        #select 8 couples
+        guess = []
+        for i in range(len(perfect_matches)):
+                guess.append(perfect_matches[i])
+        while len(guess) < 8:
+            if score_data[1] > .75:
+                for i in range((len(score_data[0])//2)):
+                    choice = random.choice(score_data[0])
+                    if choice not in guess:
+                        guess.append(choice)
+            
+            choice = random.choice(matches_remaining)
+            if choice not in guess:
+                guess.append(choice)
+        #check how many are correct
+        amount_correct = 0
+        for couple in guess:
+            if self.truth_booth(couple) is True: amount_correct += 1 
+        #if none are correct remove all couples from possibilities
+        if amount_correct == len(perfect_matches):
+            for couple in guess:
+                if couple in matches_remaining:
+                    matches_remaining.remove(couple)
+            score_data = [],0
+        else:
+            score_data = self.track_match_probability(guess, perfect_matches)
+        return amount_correct, perfect_matches, matches_remaining, score_data
+    def play_game(self, algorithm=None):
         round = 1
-        while round < 88:
+        if algorithm is None:
+            algorithm = input('Select algorithm: Random, Naive, Optimized\n')
+        while round < 1000:
             print(f'Round {round}:')
-            if round == 1:
-                comp_perfect_matches = []
-                matches_remaining = self.get_possible_answers()
-                truth_booth_couples = []
-            else:
-                comp_perfect_matches = results[1]
-                matches_remaining = results[2]
-                truth_booth_couples = results[3]
-            results = self.algorithm_1(comp_perfect_matches, matches_remaining,truth_booth_couples)
+            if algorithm == 'Naive':
+                if round == 1:
+                    comp_perfect_matches = []
+                    matches_remaining = self.get_possible_answers()
+                    truth_booth_couples = []
+                else:
+                    comp_perfect_matches = results[1]
+                    matches_remaining = results[2]
+                    truth_booth_couples = results[3]
+                results = self.algorithm_1(comp_perfect_matches, matches_remaining,truth_booth_couples)
+            elif algorithm == 'Random':
+                if round == 1:
+                    matches_remaining = self.get_possible_answers()
+                else:
+                    matches_remaining = results[1]
+                results = self.random_algorithm(matches_remaining)
+            elif algorithm == 'Optimized':
+                if round == 1:
+                    comp_perfect_matches = []
+                    matches_remaining = self.get_possible_answers()
+                    score_data = ([],0)
+                else:
+                    comp_perfect_matches = results[1]
+                    matches_remaining = results[2]
+                    score_data = results[3]
+                results = self.optimized_algorithm(comp_perfect_matches, matches_remaining, score_data)
             print(f'You got {results[0]} correct this round!')
             if results[0] == 8:
                 print(f"You won in {round} rounds!")
@@ -144,11 +246,6 @@ if __name__ == '__main__':
     s1 = Simulation()
     #print(s1.perfect_matches)
     #assert(s1.truth_booth(s1.contestants[1],s1.contestants[9]))
-    #print(S1.perfect_matches)
-    
-    #Create intro string and list contestants
-    #print('Welcome to Are You the One!')
-    #print(s1.meet_contestants())
     s1.play_game()
     #print(s1.algorithm_1())
     #print(s1.get_possible_answers()) 
