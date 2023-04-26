@@ -1,19 +1,12 @@
 import random
 import name_list as ns
-
+#define contestant w age attribute
 class Contestant:
     def __init__(self):
         self.name = random.choice(ns.nameset)
         self.age = random.choice(range(18,50))
     def __repr__(self):
         return f'{self.name}: {self.age}'
-
-class Match:
-    def __init__(self, contestant1, contestant2):
-        self.contestant1 = contestant1
-        self.contestant2 = contestant2
-        self.match = set((contestant1, contestant2))
-
 
 class Simulation:
     def __init__(self, num_of_contestants=16):
@@ -28,7 +21,7 @@ class Simulation:
     def get_perfect_matches(self):
         perfect_match_list = []
         contestants_copied = self.contestants[:]
-        
+        #split the list in half and pull from 2 sublists
         for i in range(len(self.contestants)//2):
             x = random.choice(contestants_copied[:len(contestants_copied)//2])
             y = random.choice(contestants_copied[len(contestants_copied)//2:])
@@ -42,17 +35,20 @@ class Simulation:
 
         return perfect_match_list
     def meet_contestants(self):
+        'method added for gui'
         meet_contestants = []
         for cont in self.contestants:
             meet_contestants.append(cont.__repr__())
         return meet_contestants
     
     def truth_booth(self, matchup):
+        'returns True if given matchup is part of perfect_matches'
         if matchup in self.perfect_matches: return True
         return False
         
     #Perfect Match Algorithms
     def get_possible_answers(self):
+        'returns a list of all possible couples in a list of 16 contestants'
         possible_couples = []
         for i in range(len(self.contestants)):
             for j in range(len(self.contestants)-1):
@@ -84,7 +80,7 @@ class Simulation:
         if len(new_guess) > 0:
             probability = amt_correct / len(new_guess)
         return new_guess, probability
-    def random_algorithm(self, matches_remaining):
+    def random_algorithm(self, matches_remaining, perfect_matches):
         'randomly selects couples from match possibilities'
         guess = []
         
@@ -92,10 +88,12 @@ class Simulation:
         truth_booth_choice = random.choice(matches_remaining)
         result = self.truth_booth(truth_booth_choice)
         if result is True:
-            guess.append(truth_booth_choice)
+            perfect_matches.append(truth_booth_choice)
         else:
             matches_remaining.remove(truth_booth_choice)
         #random guesses
+        for i in range(len(perfect_matches)):
+            guess.append(perfect_matches[i])
         while len(guess) < 8:
             match = random.choice(matches_remaining)
             if match not in guess:
@@ -105,10 +103,10 @@ class Simulation:
         amount_correct = 0
         for couple in guess:
             if self.truth_booth(couple) is True: amount_correct += 1
-        return amount_correct, matches_remaining
+        return amount_correct, matches_remaining, perfect_matches
 
 
-    def algorithm_1(self, perfect_matches, matches_remaining, truth_booth_couples):
+    def naive_algorithm(self, perfect_matches, matches_remaining, truth_booth_couples):
         #Send couple to truth booth
         if len(truth_booth_couples) > 0:
             selected_couple = random.choice(truth_booth_couples)
@@ -215,13 +213,15 @@ class Simulation:
                     comp_perfect_matches = results[1]
                     matches_remaining = results[2]
                     truth_booth_couples = results[3]
-                results = self.algorithm_1(comp_perfect_matches, matches_remaining,truth_booth_couples)
+                results = self.naive_algorithm(comp_perfect_matches, matches_remaining,truth_booth_couples)
             elif algorithm == 'Random':
                 if round == 1:
                     matches_remaining = self.get_possible_answers()
+                    comp_perfect_matches = []
                 else:
                     matches_remaining = results[1]
-                results = self.random_algorithm(matches_remaining)
+                    comp_perfect_matches = results[2]
+                results = self.random_algorithm(matches_remaining,comp_perfect_matches)
             elif algorithm == 'Optimized':
                 if round == 1:
                     comp_perfect_matches = []
