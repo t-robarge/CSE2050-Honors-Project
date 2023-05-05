@@ -4,7 +4,7 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from are_you_the_one import Contestant, Simulation
-from histogram import random_histogram, naive_histogram, optimized_histogram
+from histogram import random_histogram, naive_histogram, optimized_histogram, comparison_histogram
 s1 = Simulation()
 
 class color:
@@ -47,8 +47,10 @@ class GUI(tk.Tk):
         random_btn.grid(row=1,column=1)
         naive_btn = tk.Button(text='Naive Algorithm',command=self.naive_frame,master=self.master_frame, relief=tk.RAISED,bg='red',fg='black')
         naive_btn.grid(row=2,column=1)
-        naive_btn = tk.Button(text='Optimized Algorithm',command=self.optimized_frame,master=self.master_frame, relief=tk.RAISED,bg='red',fg='black')
-        naive_btn.grid(row=3,column=1)
+        optimized_btn = tk.Button(text='Optimized Algorithm',command=self.optimized_frame,master=self.master_frame, relief=tk.RAISED,bg='red',fg='black')
+        optimized_btn.grid(row=3,column=1)
+        compare_btn = tk.Button(text='Compare all Algorithms',command=self.all_frames,master=self.master_frame, relief=tk.RAISED,bg='red',fg='black')
+        compare_btn.grid(row=4,column=1)
 #define method to quit
     def quit(self, event=None):
         self.destroy()
@@ -66,7 +68,11 @@ class GUI(tk.Tk):
     def optimized_frame(self):
         histogram = optimized_histogram(1000)
         plt.show()
-
+    def all_frames(self):
+        histogram = comparison_histogram(1000)
+        plt.show()
+    #Create option that displays all the histograms in a single plot
+    #add data values to readme.py
     #create object rep of GUI
 
  

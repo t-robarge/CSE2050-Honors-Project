@@ -59,7 +59,49 @@ def optimized_histogram(n):
     graph3.legend(legend)
     graph3.text(mean(freq_list_optimized)*1.2,400,'Mean: {:.2f}'.format(mean(freq_list_optimized)))
     plt.show()
-
+def comparison_histogram(n):
+    #run games
+    freq_list_naive = []
+    for sim in range(n):
+        simulation = Simulation()
+        freq_list_naive.append(simulation.play_game('Naive'))
+    freq_list_random = []
+    for sim in range(n):
+        simulation = Simulation()
+        freq_list_random.append(simulation.play_game('Random'))
+    freq_list_optimized = []
+    for sim in range(n):
+        simulation = Simulation()
+        freq_list_optimized.append(simulation.play_game('Optimized'))
+    #create plot
+    fig, graph4 = plt.subplots(1, 1)
+    #add histograms
+    graph4.hist(freq_list_naive, bins=100, range=(0,100),color='cyan',edgecolor='k',label='Naive Algorithm',alpha=.5)
+    graph4.hist(freq_list_random, bins=120, range=(0,120),color='red',edgecolor='k',label='Random Algorithm',alpha=.5)
+    graph4.hist(freq_list_optimized, bins=100, range=(0,100),color='green',edgecolor='k',label='Optimized Algorithm',alpha=.5)
+    #customize plot
+    graph4.set_title('Comparison of Random, Naive, and Optimized Algorithms')
+    graph4.set_xlabel('Amount of Rounds to Win')
+    graph4.set_ylabel('Number of Occurences')
+    #add mean lines
+    graph4.axvline(mean(freq_list_optimized), color='purple',linestyle='dashed',linewidth=1)
+    graph4.axvline(mean(freq_list_random), color='cyan',linestyle='dashed',linewidth=1)
+    graph4.axvline(mean(freq_list_naive), color='red',linestyle='dashed',linewidth=1)
+    graph4.text(mean(freq_list_optimized)-20,70,'Mean: {:.2f}'.format(mean(freq_list_optimized)))
+    graph4.text(mean(freq_list_naive)+7,70,'Mean: {:.2f}'.format(mean(freq_list_naive)))
+    graph4.text(mean(freq_list_random)+7,70,'Mean: {:.2f}'.format(mean(freq_list_random)))
+    #add median lines
+    graph4.axvline(median(freq_list_optimized), color='purple',linestyle='dashed',linewidth=1)
+    graph4.axvline(median(freq_list_random), color='cyan',linestyle='dashed',linewidth=1)
+    graph4.axvline(median(freq_list_naive), color='red',linestyle='dashed',linewidth=1)
+    graph4.text(median(freq_list_optimized)-20,60,'Median: {:.2f}'.format(median(freq_list_optimized)))
+    graph4.text(median(freq_list_naive)+7,60,'Median: {:.2f}'.format(median(freq_list_naive)))
+    graph4.text(median(freq_list_random)+7,60,'Median: {:.2f}'.format(median(freq_list_random)))
+    plt.legend()
+    plt.show()
 if __name__ == '__main__':
-    random_histogram(1000)
-    optimized_histogram(1000)
+
+
+    #random_histogram(1000)
+    #optimized_histogram(1000)
+    comparison_histogram(1000)

@@ -2,6 +2,7 @@ import random
 import name_list as ns
 #define contestant w age attribute
 class Contestant:
+    """Class to store name and age of contestants"""
     def __init__(self):
         self.name = random.choice(ns.nameset)
         self.age = random.choice(range(18,50))
@@ -9,6 +10,7 @@ class Contestant:
         return f'{self.name}: {self.age}'
 
 class Simulation:
+    """Main class of program. Simulates gameplay"""
     def __init__(self, num_of_contestants=16):
         self.num_of_contestants = num_of_contestants
         #Create list of contestants
@@ -19,6 +21,7 @@ class Simulation:
         self.perfect_matches = self.get_perfect_matches()
         
     def get_perfect_matches(self):
+        'Creates a set of perfect match couples using the contestant list'
         perfect_match_list = []
         contestants_copied = self.contestants[:]
         #split the list in half and pull from 2 sublists
@@ -65,11 +68,7 @@ class Simulation:
                     possible_couples.append(match_set)
         return possible_couples
     def track_match_probability(self, guess, perfect_matches):
-        #make func that takes the guess and returns the list of non-perfect 
-        #match guesses, as well as the probability of one being correct
-        #represented as amt_correct_at_round / amt of non perfect matches
-        #store the variable and when the prob is good draw (amt_correct_at_round)
-        #matches at random from the list, this should optimize the function
+        'helper function to track probability of a matchset being correct'
         new_guess = []
         amt_correct = 0
         probability = 0
@@ -107,6 +106,7 @@ class Simulation:
 
 
     def naive_algorithm(self, perfect_matches, matches_remaining, truth_booth_couples):
+        'updated algorithm that stores and utilizes truth_booth information'
         #Send couple to truth booth
         if len(truth_booth_couples) > 0:
             selected_couple = random.choice(truth_booth_couples)
@@ -152,6 +152,7 @@ class Simulation:
 
         return amount_correct, perfect_matches, matches_remaining, truth_booth_couples
     def optimized_algorithm(self,perfect_matches,matches_remaining, score_data):
+        'Most optmized algorithm that utilizes amt of guesses correct data to produce better guesses'
         #Send couple to truth booth
         if score_data[1] >= .1:
             selected_couple = random.choice(score_data[0])
@@ -199,11 +200,13 @@ class Simulation:
             score_data = self.track_match_probability(guess, perfect_matches)
         return amount_correct, perfect_matches, matches_remaining, score_data
     def play_game(self, algorithm=None):
+        'Method that runs through the game'
         round = 1
         if algorithm is None:
             algorithm = input('Select algorithm: Random, Naive, Optimized\n')
         while round < 1000:
-            print(f'Round {round}:')
+            if __name__ == '__main__':
+                print(f'Round {round}:')
             if algorithm == 'Naive':
                 if round == 1:
                     comp_perfect_matches = []
@@ -232,10 +235,12 @@ class Simulation:
                     matches_remaining = results[2]
                     score_data = results[3]
                 results = self.optimized_algorithm(comp_perfect_matches, matches_remaining, score_data)
-            print(f'You got {results[0]} correct this round!')
+            if __name__ == '__main__':
+                print(f'You got {results[0]} correct this round!')
             if results[0] == 8:
-                print(f"You won in {round} rounds!")
-                print(f'The perfect matches are: {self.perfect_matches}')
+                if __name__ == '__main__':
+                    print(f"You won in {round} rounds!")
+                    print(f'The perfect matches are: {self.perfect_matches}')
                 break
                 
             round += 1
