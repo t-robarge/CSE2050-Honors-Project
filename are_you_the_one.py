@@ -104,7 +104,6 @@ class Simulation:
             if self.truth_booth(couple) is True: amount_correct += 1
         return amount_correct, matches_remaining, perfect_matches
 
-
     def naive_algorithm(self, perfect_matches, matches_remaining, truth_booth_couples):
         'updated algorithm that stores and utilizes truth_booth information'
         #Send couple to truth booth
@@ -151,6 +150,7 @@ class Simulation:
                 assert(couple in self.perfect_matches)
 
         return amount_correct, perfect_matches, matches_remaining, truth_booth_couples
+    
     def optimized_algorithm(self,perfect_matches,matches_remaining, score_data):
         'Most optmized algorithm that utilizes amt of guesses correct data to produce better guesses'
         #Send couple to truth booth
@@ -199,11 +199,12 @@ class Simulation:
         else:
             score_data = self.track_match_probability(guess, perfect_matches)
         return amount_correct, perfect_matches, matches_remaining, score_data
+    
     def play_game(self, algorithm=None):
         'Method that runs through the game'
         round = 1
         if algorithm is None:
-            algorithm = input('Select algorithm: Random, Naive, Optimized\n')
+            algorithm = input("Select algorithm: 'Random', 'Naive', or 'Optimized'\n")
         while round < 1000:
             if __name__ == '__main__':
                 print(f'Round {round}:')

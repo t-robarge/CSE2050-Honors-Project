@@ -38,14 +38,16 @@ class GUI(tk.Tk):
         optimized_btn.grid(row=3,column=1)
         compare_btn = tk.Button(text='Compare all Algorithms',command=self.all_frames,master=self.master_frame, relief=tk.RAISED,bg='red',fg='black')
         compare_btn.grid(row=4,column=1)
-#define method to quit
+    #define method to quit
     def quit(self, event=None):
         self.destroy()
+    #define method to restart
     def restart(self, event=None):
         self.destroy()
         new_root = GUI()
         
         root.mainloop()
+    #functions to assign to buttons
     def random_frame(self):
         histogram  = random_histogram(1000)
         plt.show()
@@ -58,34 +60,7 @@ class GUI(tk.Tk):
     def all_frames(self):
         histogram = comparison_histogram(1000)
         plt.show()
-    #Create option that displays all the histograms in a single plot
-    #add data values to readme.py
-    #create object rep of GUI
 
- 
-
-    
-
-        """
-    meeting = tk.Label(title_frame, text="Let's meet our contestants:")
-    count = 0
-    contestant_frame = tk.Frame(master_frame)
-    contestant_frame.grid(row=1,column=1)
-    for i in range(4):
-        for j in range(4):
-            contestant = tk.Label(contestant_frame,text=s1.meet_contestants()[count],width=10,fg='purple',bg='white',relief=tk.RIDGE)
-            #contestant.grid(row=j+2,column=i)
-            contestant.pack()
-            count += 1
-
-
-    #put it on the screen
-    greeting.grid(row=0, column=0)
-    meeting.grid(row=1, column=0)
-        """
-
-
-#run the GUI
 if __name__ == '__main__':
     root = GUI()
     root.mainloop()

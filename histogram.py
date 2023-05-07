@@ -22,7 +22,7 @@ def naive_histogram(n):
     legend = ['Mean']
     graph.legend(legend)
     graph.text(mean(freq_list)*1.1,400,'Mean: {:.2f}'.format(mean(freq_list)))
-    plt.show()
+    return graph
 
 def random_histogram(n):
     freq_list_random = []
@@ -41,6 +41,7 @@ def random_histogram(n):
     graph2.legend(legend)
     graph2.text(mean(freq_list_random)*1.3,225,'Mean: {:.2f}'.format(mean(freq_list_random)))
     return graph2
+
 def optimized_histogram(n):
     freq_list_optimized = []
     for sim in range(n):
@@ -58,7 +59,8 @@ def optimized_histogram(n):
     legend = ['Mean']
     graph3.legend(legend)
     graph3.text(mean(freq_list_optimized)*1.2,400,'Mean: {:.2f}'.format(mean(freq_list_optimized)))
-    plt.show()
+    return graph3
+
 def comparison_histogram(n):
     #run games
     freq_list_naive = []
@@ -98,10 +100,6 @@ def comparison_histogram(n):
     graph4.text(median(freq_list_naive)+7,60,'Median: {:.2f}'.format(median(freq_list_naive)))
     graph4.text(median(freq_list_random)+7,60,'Median: {:.2f}'.format(median(freq_list_random)))
     plt.legend()
-    plt.show()
+    return graph4
 if __name__ == '__main__':
-
-
-    #random_histogram(1000)
-    #optimized_histogram(1000)
-    comparison_histogram(1000)
+    pass
